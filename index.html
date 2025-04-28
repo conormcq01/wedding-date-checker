@@ -13,39 +13,52 @@
 <body>
 
 <h2>Check Your Wedding Date Availability</h2>
-<p>Select your desired wedding date below:</p>
-<input type="date" id="weddingDate">
-<button onclick="checkDate()">Check Availability</button>
+<p>Select your wedding date below:</p>
+<input type="date" id="dateInput">
+<button onclick="checkAvailability()">Check Availability</button>
 
 <div id="result"></div>
 
 <script>
-  const bookedDates = [
-    '2025-06-14', '2025-07-12', '2025-08-09', '2025-08-23', '2025-09-06',
-    '2025-09-20', '2025-10-04', '2025-10-18', '2025-11-01', '2025-11-15',
-    '2025-12-06', '2025-12-20', '2026-01-10', '2026-02-14', '2026-03-07',
-    '2026-04-04', '2026-04-18', '2026-05-09', '2026-05-23', '2026-06-06',
-    '2026-06-20', '2026-07-04', '2026-07-18', '2026-08-01', '2026-08-15',
-    '2026-08-29', '2026-09-12', '2026-09-26', '2026-10-10', '2026-10-24',
-    '2026-11-07', '2026-11-21', '2026-12-05', '2026-12-19'
-    // (Add more booked dates here if needed)
-  ];
+const API_KEY = 'AIzaSyDGDuusf77P39k8xBnlece2aGb9oQFkv-0'; // YOUR API KEY
+const CALENDAR_ID = 'your_calendar_id_here@group.calendar.google.com'; // Replace with your Calendar ID
 
-  function checkDate() {
-    const inputDate = document.getElementById('weddingDate').value;
-    const resultDiv = document.getElementById('result');
-
-    if (!inputDate) {
-      resultDiv.innerHTML = 'Please select a date first!';
-      return;
-    }
-
-    if (bookedDates.includes(inputDate)) {
-      resultDiv.innerHTML = '<span style="color: red;">Sorry, we are already booked on that date. Please choose another date!</span>';
-    } else {
-      resultDiv.innerHTML = '<span style="color: green;">Great news! We are available on that date. Please contact us to book!</span>';
-    }
+function checkAvailability() {
+  const date = document.getElementById('dateInput').value;
+  if (!date) {
+    document.getElementById('result').innerHTML = "Please select a date.";
+    return;
   }
+
+  const timeMin = date + "T00:00:00Z";
+  const timeMax = date + "T23:59:59Z";
+
+  fetch(`https://www.googleapis.com/calendar/v3/freeBusy?key=${API_KEY}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      timeMin: timeMin,
+      timeMax: timeMax,
+      timeZone: "Europe/London",
+      items: [{ id: CALENDAR_ID }]
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const busySlots = data.calendars[CALENDAR_ID].busy;
+    if (busySlots.length === 0) {
+      document.getElementById('result').innerHTML = "<span style='color:green;'>✅ Yes, we are available on this date! Please contact us to book.</span>";
+    } else {
+      document.getElementById('result').innerHTML = "<span style='color:red;'>❌ Sorry, we are already booked on this date. Please choose another date!</span>";
+    }
+  })
+  .catch(error => {
+    console.error("Error checking date:", error);
+    document.getElementById('result').innerHTML = "There was an error checking the date. Please try again.";
+  });
+}
 </script>
 
 </body>

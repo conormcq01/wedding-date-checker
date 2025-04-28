@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Date Checker</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    input, button { padding: 10px; margin: 10px; font-size: 16px; }
+    #result { font-size: 20px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h2>Check Your Wedding Date Availability</h2>
+<p>Select your desired wedding date below:</p>
+<input type="date" id="weddingDate">
+<button onclick="checkDate()">Check Availability</button>
+
+<div id="result"></div>
+
+<script>
+  const bookedDates = [
+    '2025-06-14', '2025-07-12', '2025-08-09', '2025-08-23', '2025-09-06',
+    '2025-09-20', '2025-10-04', '2025-10-18', '2025-11-01', '2025-11-15',
+    '2025-12-06', '2025-12-20', '2026-01-10', '2026-02-14', '2026-03-07',
+    '2026-04-04', '2026-04-18', '2026-05-09', '2026-05-23', '2026-06-06',
+    '2026-06-20', '2026-07-04', '2026-07-18', '2026-08-01', '2026-08-15',
+    '2026-08-29', '2026-09-12', '2026-09-26', '2026-10-10', '2026-10-24',
+    '2026-11-07', '2026-11-21', '2026-12-05', '2026-12-19'
+    // (Add more booked dates here if needed)
+  ];
+
+  function checkDate() {
+    const inputDate = document.getElementById('weddingDate').value;
+    const resultDiv = document.getElementById('result');
+
+    if (!inputDate) {
+      resultDiv.innerHTML = 'Please select a date first!';
+      return;
+    }
+
+    if (bookedDates.includes(inputDate)) {
+      resultDiv.innerHTML = '<span style="color: red;">Sorry, we are already booked on that date. Please choose another date!</span>';
+    } else {
+      resultDiv.innerHTML = '<span style="color: green;">Great news! We are available on that date. Please contact us to book!</span>';
+    }
+  }
+</script>
+
+</body>
+</html>
